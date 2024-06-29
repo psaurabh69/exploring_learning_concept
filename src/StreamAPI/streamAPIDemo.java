@@ -1,9 +1,8 @@
-package java8.stream;
-
-import com.sun.source.doctree.SummaryTree;
+package StreamAPI;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class streamAPIDemo {
     public static void main(String[] args){
@@ -12,10 +11,11 @@ public class streamAPIDemo {
         User user1 = new User(1,"Saurabh",29);
         User user2 = new User(2,"Shiv",26);
         User user3 = new User(3,"Ajay",26);
-        User user4 = new User(4,"Vikas",30);
+        User user4 = new User(4,"Shiv",30);
         User user5 = new User(5,"Bhavesh",24);
         List<User> userList = Arrays.asList(user1,user2,user3,user4,user5);
 
+        /*Java Stream API po */
 /*      Intermediate Operations
         map: Transform each element using the provided function.
         filter: Select elements based on a given condition.
@@ -108,6 +108,11 @@ public class streamAPIDemo {
                 .mapToInt(Integer::intValue)
                 .max().ifPresent(System.out::println);
 
+        System.out.println("FlatMap Operation : ");
+        list12.stream()
+                .flatMap(Collection::stream)
+                .map(e->e+1)
+                .forEach(System.out::println);
         //------------------------------------- 5. Distinct  -----------------------------------------------
         System.out.println("Find Distinct value from List.");
         List<Integer> listDist = Arrays.asList(2,4,3,4,3,2,3,4);
@@ -138,7 +143,59 @@ public class streamAPIDemo {
         userList.stream()
                 .max(Comparator.comparing(User::getAge))
                 .ifPresent(System.out::println);
+
+        //----------------------------------- 7. use of Grouping  ------------------------------------------
+
+        Map<Integer,List<User>> map =  userList.stream().collect(Collectors.groupingBy(User::getAge));
+        map.forEach((k,v)->{
+            System.out.println("key "+k+ "Value" +v);
+        });
+
+        System.out.println("Latest :  :::: : ");
+
+        Map<Integer,Long> map1 =  userList.stream()
+                .collect(Collectors.groupingBy(User::getAge, Collectors.counting()));
+        System.out.println("Return Value 1: "+map1.put(2,33L));
+        System.out.println("Return Value 2: "+map1.put(2,33L));
+
+        System.out.println("Remove Value 2: "+map1.remove(2));
+        System.out.println("Remove Value 2: "+map1.remove(2));
+
+        map1.forEach((k,v)->{
+            System.out.println("key "+k+ "Value" +v);
+        });
+
+        //---------------------------- 15- Find the user who has second rank in Age ------------------------
+
+         User user = userList.stream()
+                             .sorted(Comparator.comparing(User::getAge)).skip(1).findFirst().get();
+        System.out.println("User : " +user.getName());
+
+        //----------- To Print 5 Random Number in Sorting Order using JAVA Stream.
+        System.out.println("Print 5 Random Number : ");
+        Random rad = new Random();
+        IntStream intStream = rad.ints(5);
+        intStream.sorted().forEach(System.out::println);
+
+        String input = "hello world";
+       /* 1. Convert string to character
+       *  2.
+       *
+       * */
+
+        // Find the first duplicate character
+        Character firstDuplicate = input.chars()
+                .mapToObj(c -> (char) c)
+                .collect(Collectors.groupingBy(c -> c, Collectors.counting()))
+                .entrySet()
+                .stream()
+                .filter(entry -> entry.getValue() > 1)
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null); // If no duplicates found
     }
+
+
 
 
 }

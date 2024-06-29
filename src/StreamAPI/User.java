@@ -1,4 +1,4 @@
-package java8.stream;
+package StreamAPI;
 
 public class User {
 
